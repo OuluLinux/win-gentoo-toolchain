@@ -20,9 +20,13 @@ SLOT="0"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86"
 
 IUSE="alsa aqua cpu_flags_ppc_altivec cpu_flags_x86_3dnow cpu_flags_x86_mmx cpu_flags_x86_sse cpu_flags_x86_sse2 cpu_flags_x86_sse3 custom-cflags dbus doc fcitx gles1 gles2 +haptic ibus jack +joystick kms libsamplerate nas opengl oss pipewire pulseaudio sndio +sound static-libs test udev +video vulkan wayland X xscreensaver"
+
+if [[ ${SDL2_IS_MINGW} -eq 1 ]]; then
+	IUSE="${IUSE/alsa /}"
+fi
 RESTRICT="!test? ( test )"
+
 REQUIRED_USE="
-	alsa? ( sound )
 	fcitx? ( dbus )
 	gles1? ( video )
 	gles2? ( video )
@@ -40,9 +44,14 @@ REQUIRED_USE="
 	xscreensaver? ( X )
 "
 
+if [[ ${SDL2_IS_MINGW} -eq 0 ]]; then
+	REQUIRED_USE+="
+	alsa? ( sound )
+"
+fi
+
 COMMON_DEPEND="
 	virtual/libiconv[${MULTILIB_USEDEP}]
-	alsa? ( >=media-libs/alsa-lib-1.0.27.2[${MULTILIB_USEDEP}] )
 	dbus? ( >=sys-apps/dbus-1.6.18-r1[${MULTILIB_USEDEP}] )
 	ibus? ( app-i18n/ibus )
 	jack? ( virtual/jack[${MULTILIB_USEDEP}] )
@@ -56,6 +65,12 @@ COMMON_DEPEND="
 		>=x11-libs/libXt-1.1.4[${MULTILIB_USEDEP}]
 	)
 "
+
+if [[ ${SDL2_IS_MINGW} -eq 0 ]]; then
+	COMMON_DEPEND+="
+	alsa? ( >=media-libs/alsa-lib-1.0.27.2[${MULTILIB_USEDEP}] )
+"
+fi
 
 if [[ ${SDL2_IS_MINGW} -eq 0 ]]; then
 	COMMON_DEPEND+="
@@ -138,6 +153,11 @@ src_configure() {
 	local sdl_opengl_flag=$(usex opengl ON OFF)
 	[[ ${SDL2_IS_MINGW} -eq 1 ]] && sdl_opengl_flag=ON
 
+	local sdl_alsa_flag=OFF
+	if [[ ${SDL2_IS_MINGW} -eq 0 ]]; then
+		sdl_alsa_flag=$(usex alsa)
+	fi
+
 	local mycmakeargs=(
 		-DSDL_STATIC=$(usex static-libs)
 		-DSDL_SYSTEM_ICONV=ON
@@ -160,7 +180,7 @@ src_configure() {
 		-DSDL_SSE2=$(usex cpu_flags_x86_sse2)
 		-DSDL_SSE3=$(usex cpu_flags_x86_sse3)
 		-DSDL_OSS=$(usex oss)
-		-DSDL_ALSA=$(usex alsa)
+		-DSDL_ALSA=${sdl_alsa_flag}
 		-DSDL_ALSA_SHARED=OFF
 		-DSDL_JACK=$(usex jack)
 		-DSDL_JACK_SHARED=OFF

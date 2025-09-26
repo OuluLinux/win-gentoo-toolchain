@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>maintainer-needed@gentoo.org</email>
+		<name>Maintainer Needed</name>
+	</maintainer>
+	<use>
+		<flag name="fcitx">Enable integration with the Fcitx input method framework.</flag>
+		<flag name="gles1">Enable OpenGL ES 1.x rendering backend.</flag>
+		<flag name="gles2">Enable OpenGL ES 2.x rendering backend.</flag>
+		<flag name="haptic">Enable haptic (force feedback) joystick support.</flag>
+		<flag name="ibus">Enable integration with the IBus input method framework.</flag>
+		<flag name="kms">Enable KMS/DRM video backend support.</flag>
+		<flag name="pipewire">Enable PipeWire audio backend support.</flag>
+		<flag name="sndio">Enable the sndio audio backend.</flag>
+		<flag name="video">Enable video (windowing) subsystem support.</flag>
+		<flag name="xscreensaver">Enable XScreenSaver extension support for blanking inhibition.</flag>
+	</use>
+</pkgmetadata>

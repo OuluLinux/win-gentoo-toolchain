@@ -3,7 +3,7 @@
 
 EAPI=8
 
-inherit flag-o-matic libtool
+inherit libtool
 
 DESCRIPTION="Relatively thin, simple and robust network communication layer on top of UDP"
 HOMEPAGE="http://enet.bespin.org/ https://github.com/lsalzman/enet/"
@@ -19,13 +19,16 @@ RDEPEND="!${CATEGORY}/${PN}:0"
 src_prepare() {
 	default
 	elibtoolize
+
+	if [[ ${CHOST} == *-mingw* ]]; then
+		sed -i -e '/^libenet_la_LDFLAGS/s/$/ -no-undefined/' Makefile.am Makefile.in || die
+	fi
 }
 
 src_configure() {
 	if [[ ${CHOST} == *-mingw* ]]; then
 		export ac_cv_prog_cc_cross=yes
 		export ac_cv_exeext=.exe
-		append-ldflags -no-undefined
 	fi
 
 	econf $(use_enable static-libs static)

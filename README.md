@@ -1,5 +1,7 @@
 # win-gentoo-toolchain
 
+Gentoo crossdev overlay targeting `x86_64` and `i686` for building Windows executables with pthreads and OpenGL support.
+
 
 ## Installation
 
@@ -24,4 +26,3 @@ emaint sync -r oululinux-win
 ```bash
 emerge --ask media-libs/libsdl2
 ```
-

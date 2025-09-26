@@ -21,6 +21,9 @@
 - Keep `eselect repository` or `/etc/portage/repos.conf` pointing at this overlay to pick up custom ebuilds.
 - Use `emerge-x86_64-w64-mingw32` (and the 32-bit variant as needed) to merge packages for the MinGW sysroot.
 - Container environments must permit sudo escalation; the “no new privileges” flag blocks `sudo emerge-x86_64-w64-mingw32`.
+- After local changes, publish overlays using `git add . && git commit -m "<message>" && git push` (replace `<message>` with a concise summary).
+- Refresh the crossdev tree via `sudo emerge-x86_64-w64-mingw32 --sync` before testing.
+- Rebuild validation targets with `sudo emerge-x86_64-w64-mingw32 -1 games-fps/tesseract-sauerbraten` to confirm fixes.
 
 ## Maintenance Checklist
 - Run `pkgcheck scan` before pushing updates to maintain Manifest/EAPI compliance.

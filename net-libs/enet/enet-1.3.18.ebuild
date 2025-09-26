@@ -21,7 +21,10 @@ src_prepare() {
 	elibtoolize
 
 	if [[ ${CHOST} == *-mingw* ]]; then
-		sed -i -e '/^libenet_la_LDFLAGS/s/$/ -no-undefined/' Makefile.am Makefile.in || die
+		sed -i \
+			-e '/^libenet_la_LDFLAGS/s/$/ -no-undefined/' \
+			-e '/^libenet_la_LIBADD/s/$/ -lws2_32/' \
+		Makefile.am Makefile.in || die
 	fi
 }
 

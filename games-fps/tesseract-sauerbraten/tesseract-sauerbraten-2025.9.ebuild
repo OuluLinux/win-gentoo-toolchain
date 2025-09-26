@@ -18,7 +18,7 @@ IUSE="debug dedicated server"
 mingw_use_deps() {
 	local use_deps="opengl"
 
-	if [[ ${CHOST} != *-mingw* ]]; then
+	if [[ ${ELIBC} != mingw* ]]; then
 		use_deps="X,${use_deps}"
 	fi
 
@@ -26,7 +26,7 @@ mingw_use_deps() {
 }
 
 mingw_optional_dep() {
-	if [[ ${CHOST} != *-mingw* ]]; then
+	if [[ ${ELIBC} != mingw* ]]; then
 		echo -e "\t\t$1"
 	fi
 }

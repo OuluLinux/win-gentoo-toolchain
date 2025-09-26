@@ -23,7 +23,7 @@ src_prepare() {
 	if [[ ${CHOST} == *-mingw* ]]; then
 		sed -i \
 			-e '/^libenet_la_LDFLAGS/s/$/ -no-undefined/' \
-			-e '/^libenet_la_LIBADD/s/$/ -lws2_32/' \
+			-e '/^libenet_la_LIBADD/s/$/ -lws2_32 -lwinmm/' \
 		Makefile.am Makefile.in || die
 	fi
 }

@@ -5,7 +5,7 @@ Gentoo crossdev overlay targeting `x86_64` and `i686` for building Windows execu
 
 ## Installation
 
-1. Create the overlay definition `/etc/portage/repos.conf/oululinux-win.conf` (or any file under `repos.conf`).
+1. Create the overlay definition `/usr/x86_64-w64-mingw32/etc/portage/repos.conf/oululinux-win.conf` (or any file under `repos.conf`).
 2. Add the following repository configuration:
 
 ```

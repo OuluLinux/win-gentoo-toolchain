@@ -36,10 +36,10 @@ REQUIRED_USE="
 	sndio? ( sound )
 	test? ( static-libs )
 	vulkan? ( video )
-		wayland? ( gles2 )
-		xscreensaver? ( X )
-		alsa? ( sound )
-		elibc_mingw? ( !alsa !udev )
+	wayland? ( gles2 )
+	xscreensaver? ( X )
+	alsa? ( sound )
+	elibc_mingw? ( !alsa )
 "
 
 COMMON_DEPEND="

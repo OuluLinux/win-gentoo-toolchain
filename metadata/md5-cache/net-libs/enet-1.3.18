@@ -11,4 +11,4 @@ RDEPEND=!net-libs/enet:0
 SLOT=1.3/8
 SRC_URI=http://enet.bespin.org/download/enet-1.3.18.tar.gz
 _eclasses_=toolchain-funcs	a0b29008c671a362b505f96fa80ce9c0	flag-o-matic	a7afe42e95fb46ce9691605acfb24672	libtool	c81bd096be5f4c82f4e8f156ef112402
-_md5_=850e32044f3f861a6002c98f67bfa182
+_md5_=5686b76a2167177acfa3d3e1f5852713

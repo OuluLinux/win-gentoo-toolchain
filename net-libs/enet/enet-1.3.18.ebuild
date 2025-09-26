@@ -24,6 +24,7 @@ src_prepare() {
 src_configure() {
 	if [[ ${CHOST} == *-mingw* ]]; then
 		export ac_cv_prog_cc_cross=yes
+		export ac_cv_exeext=.exe
 		append-ldflags -no-undefined
 	fi
 

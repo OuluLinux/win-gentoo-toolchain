@@ -3,7 +3,7 @@
 
 EAPI=8
 
-inherit flag-o-matic libtool toolchain-funcs
+inherit flag-o-matic libtool
 
 DESCRIPTION="Relatively thin, simple and robust network communication layer on top of UDP"
 HOMEPAGE="http://enet.bespin.org/ https://github.com/lsalzman/enet/"
@@ -23,6 +23,7 @@ src_prepare() {
 
 src_configure() {
 	if [[ ${CHOST} == *-mingw* ]]; then
+		export ac_cv_prog_cc_cross=yes
 		append-ldflags -no-undefined
 	fi
 

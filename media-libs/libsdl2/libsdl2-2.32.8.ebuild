@@ -5,7 +5,7 @@ EAPI=8
 
 inherit cmake-multilib dot-a flag-o-matic
 
-# Detect cross-compiled MinGW targets so we can relax Linux-only GL deps.
+# Detect cross-compiled MinGW targets so we can tweak Windows defaults.
 SDL2_IS_MINGW=0
 [[ ${CHOST} == *-mingw* ]] && SDL2_IS_MINGW=1
 
@@ -20,10 +20,6 @@ SLOT="0"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86"
 
 IUSE="alsa aqua cpu_flags_ppc_altivec cpu_flags_x86_3dnow cpu_flags_x86_mmx cpu_flags_x86_sse cpu_flags_x86_sse2 cpu_flags_x86_sse3 custom-cflags dbus doc fcitx gles1 gles2 +haptic ibus jack +joystick kms libsamplerate nas opengl oss pipewire pulseaudio sndio +sound static-libs test udev +video vulkan wayland X xscreensaver"
-
-if [[ ${SDL2_IS_MINGW} -eq 1 ]]; then
-	IUSE="${IUSE/alsa /}"
-fi
 RESTRICT="!test? ( test )"
 
 REQUIRED_USE="
@@ -42,16 +38,13 @@ REQUIRED_USE="
 	vulkan? ( video )
 	wayland? ( gles2 )
 	xscreensaver? ( X )
-"
-
-if [[ ${SDL2_IS_MINGW} -eq 0 ]]; then
-	REQUIRED_USE+="
 	alsa? ( sound )
+	elibc_mingw? ( !alsa )
 "
-fi
 
 COMMON_DEPEND="
 	virtual/libiconv[${MULTILIB_USEDEP}]
+	alsa? ( !elibc_mingw? ( >=media-libs/alsa-lib-1.0.27.2[${MULTILIB_USEDEP}] ) )
 	dbus? ( >=sys-apps/dbus-1.6.18-r1[${MULTILIB_USEDEP}] )
 	ibus? ( app-i18n/ibus )
 	jack? ( virtual/jack[${MULTILIB_USEDEP}] )
@@ -64,24 +57,10 @@ COMMON_DEPEND="
 		>=media-libs/nas-1.9.4[${MULTILIB_USEDEP}]
 		>=x11-libs/libXt-1.1.4[${MULTILIB_USEDEP}]
 	)
-"
-
-if [[ ${SDL2_IS_MINGW} -eq 0 ]]; then
-	COMMON_DEPEND+="
-	alsa? ( >=media-libs/alsa-lib-1.0.27.2[${MULTILIB_USEDEP}] )
-"
-fi
-
-if [[ ${SDL2_IS_MINGW} -eq 0 ]]; then
-	COMMON_DEPEND+="
-	opengl? (
+	opengl? ( !elibc_mingw? (
 		>=virtual/opengl-7.0-r1[${MULTILIB_USEDEP}]
 		>=virtual/glu-9.0-r1[${MULTILIB_USEDEP}]
-	)
-"
-fi
-
-COMMON_DEPEND+="
+	) )
 	pipewire? ( media-video/pipewire:=[${MULTILIB_USEDEP}] )
 	pulseaudio? ( media-libs/libpulse[${MULTILIB_USEDEP}] )
 	sndio? ( media-sound/sndio:=[${MULTILIB_USEDEP}] )
@@ -111,8 +90,8 @@ RDEPEND="
 "
 DEPEND="
 	${COMMON_DEPEND}
-	gles1? ( media-libs/libglvnd )
-	gles2? ( media-libs/libglvnd )
+	gles1? ( !elibc_mingw? ( media-libs/libglvnd ) )
+	gles2? ( !elibc_mingw? ( media-libs/libglvnd ) )
 	ibus? ( dev-libs/glib:2[${MULTILIB_USEDEP}] )
 	test? ( x11-libs/libX11[${MULTILIB_USEDEP}] )
 	vulkan? ( dev-util/vulkan-headers )
@@ -153,11 +132,6 @@ src_configure() {
 	local sdl_opengl_flag=$(usex opengl ON OFF)
 	[[ ${SDL2_IS_MINGW} -eq 1 ]] && sdl_opengl_flag=ON
 
-	local sdl_alsa_flag=OFF
-	if [[ ${SDL2_IS_MINGW} -eq 0 ]]; then
-		sdl_alsa_flag=$(usex alsa)
-	fi
-
 	local mycmakeargs=(
 		-DSDL_STATIC=$(usex static-libs)
 		-DSDL_SYSTEM_ICONV=ON
@@ -180,7 +154,7 @@ src_configure() {
 		-DSDL_SSE2=$(usex cpu_flags_x86_sse2)
 		-DSDL_SSE3=$(usex cpu_flags_x86_sse3)
 		-DSDL_OSS=$(usex oss)
-		-DSDL_ALSA=${sdl_alsa_flag}
+		-DSDL_ALSA=$(usex alsa)
 		-DSDL_ALSA_SHARED=OFF
 		-DSDL_JACK=$(usex jack)
 		-DSDL_JACK_SHARED=OFF

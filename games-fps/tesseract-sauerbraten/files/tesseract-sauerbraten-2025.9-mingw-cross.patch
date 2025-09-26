@@ -1,36 +1,11 @@
 --- a/src/Makefile
 +++ b/src/Makefile
-@@ -7,6 +7,13 @@
- PLATFORM= $(shell uname -s | tr '[:lower:]' '[:upper:]')
- PLATFORM_ARCH= $(shell uname -m)
- PLATFORM_PREFIX= native
-+ifneq (,$(findstring mingw,$(CXX)))
-+ifneq (,$(findstring x86_64,$(CXX)))
-+PLATFORM = MINGW64_CROSS
-+else
-+PLATFORM = MINGW32_CROSS
-+endif
-+endif
- ifdef OS
-     ifeq ($(OS),Windows_NT)
-         PLATFORM = MINGW
-@@ -47,7 +54,7 @@
+@@ -52,7 +52,7 @@
+ override CXX+= -m32
+ override WINDRES+= -F pe-i386
  endif
- CLIENT_INCLUDES= $(INCLUDES) $(SDL2_CFLAGS) -Iinclude
+-CLIENT_INCLUDES= $(INCLUDES) -Iinclude
++CLIENT_INCLUDES= $(INCLUDES) $(SDL2_CFLAGS) -Iinclude
  STD_LIBS= -static-libgcc -static-libstdc++
--CLIENT_LIBS= -mwindows $(STD_LIBS) -L$(WINBIN) -L$(WINLIB) -lSDL2 -lSDL2_image -lSDL2_mixer -lzlib1 -lopengl32 -lenet -lws2_32 -lwinmm
-+CLIENT_LIBS= -mwindows $(STD_LIBS) -L$(WINBIN) -L$(WINLIB) -lSDL2 -lSDL2_image -lSDL2_mixer -lz -lopengl32 -lenet -lws2_32 -lwinmm
+ CLIENT_LIBS= -mwindows $(STD_LIBS) -L$(WINBIN) -L$(WINLIB) -lSDL2 -lSDL2_image -lSDL2_mixer -lz -lopengl32 -lenet -lws2_32 -lwinmm
  else	
- ifneq (,$(findstring DARWIN,$(PLATFORM)))
- OSXMIN= 10.9
-@@ -130,8 +137,8 @@
- SERVER_INCLUDES= -DSTANDALONE -Istandalone/shared -Istandalone/engine -Istandalone/game $(INCLUDES)
- ifneq (,$(findstring MINGW,$(PLATFORM)))
- SERVER_INCLUDES+= -Iinclude
--SERVER_LIBS= -mwindows $(STD_LIBS) -L$(WINBIN) -L$(WINLIB) -lzlib1 -lenet -lws2_32 -lwinmm
--MASTER_LIBS= $(STD_LIBS) -L$(WINBIN) -L$(WINLIB) -lzlib1 -lenet -lws2_32 -lwinmm
-+SERVER_LIBS= -mwindows $(STD_LIBS) -L$(WINBIN) -L$(WINLIB) -lz -lenet -lws2_32 -lwinmm
-+MASTER_LIBS= $(STD_LIBS) -L$(WINBIN) -L$(WINLIB) -lz -lenet -lws2_32 -lwinmm
- else
- SERVER_LIBS= -lenet -lz
- MASTER_LIBS= $(SERVER_LIBS)

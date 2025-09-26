@@ -10,18 +10,6 @@
  
  PLATFORM= $(shell uname -s | tr '[:lower:]' '[:upper:]')
  PLATFORM_ARCH= $(shell uname -m)
-@@ -44,7 +44,7 @@
- WINLIB=lib
- WINBIN=../bin
- override CXX+= -m32
- override WINDRES+= -F pe-i386
- endif
--CLIENT_INCLUDES= $(INCLUDES) -Iinclude
-+CLIENT_INCLUDES= $(INCLUDES) $(SDL2_CFLAGS) -Iinclude
- STD_LIBS= -static-libgcc -static-libstdc++
- CLIENT_LIBS= -mwindows $(STD_LIBS) -L$(WINBIN) -L$(WINLIB) -lSDL2 -lSDL2_image -lSDL2_mixer -lz -lopengl32 -lenet -lws2_32 -lwinmm
- else	
-
 @@ -10,14 +13,8 @@
      endif
  endif

@@ -19,6 +19,8 @@
 - pthreads support relies on the mingw-w64 runtime; ensure `USE=pthreads` is set where applicable.
 - OpenGL support for mingw is provided through SDL; overlay relaxes Linux-only OpenGL deps when `CHOST` matches mingw.
 - Keep `eselect repository` or `/etc/portage/repos.conf` pointing at this overlay to pick up custom ebuilds.
+- Use `emerge-x86_64-w64-mingw32` (and the 32-bit variant as needed) to merge packages for the MinGW sysroot.
+- Container environments must permit sudo escalation; the “no new privileges” flag blocks `sudo emerge-x86_64-w64-mingw32`.
 
 ## Maintenance Checklist
 - Run `pkgcheck scan` before pushing updates to maintain Manifest/EAPI compliance.

@@ -15,32 +15,21 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="debug dedicated server"
 
-mingw_use_deps() {
-	local use_deps="opengl"
-
-	if [[ ${ELIBC} != mingw* ]]; then
-		use_deps="X,${use_deps}"
-	fi
-
-	echo "${use_deps}"
-}
-
-mingw_optional_dep() {
-	if [[ ${ELIBC} != mingw* ]]; then
-		echo -e "\t\t$1"
-	fi
-}
-
 DEPEND="
 	>=net-libs/enet-1.3.6:1.3
 	sys-libs/zlib
 	!dedicated? (
-		media-libs/libsdl2[$(mingw_use_deps)]
 		media-libs/sdl2-image
 		media-libs/sdl2-mixer
-$(mingw_optional_dep "virtual/opengl")
-$(mingw_optional_dep "virtual/glu")
-$(mingw_optional_dep "x11-libs/libX11")
+		elibc_mingw? (
+			media-libs/libsdl2[opengl]
+		)
+		!elibc_mingw? (
+			media-libs/libsdl2[X,opengl]
+			virtual/opengl
+			virtual/glu
+			x11-libs/libX11
+		)
 	)
 "
 RDEPEND="

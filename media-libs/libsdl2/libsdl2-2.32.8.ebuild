@@ -36,10 +36,10 @@ REQUIRED_USE="
 	sndio? ( sound )
 	test? ( static-libs )
 	vulkan? ( video )
-	wayland? ( gles2 )
-	xscreensaver? ( X )
-	alsa? ( sound )
-	elibc_mingw? ( !alsa )
+		wayland? ( gles2 )
+		xscreensaver? ( X )
+		alsa? ( sound )
+		elibc_mingw? ( !alsa !udev )
 "
 
 COMMON_DEPEND="
@@ -64,7 +64,7 @@ COMMON_DEPEND="
 	pipewire? ( media-video/pipewire:=[${MULTILIB_USEDEP}] )
 	pulseaudio? ( media-libs/libpulse[${MULTILIB_USEDEP}] )
 	sndio? ( media-sound/sndio:=[${MULTILIB_USEDEP}] )
-	udev? ( >=virtual/libudev-208:=[${MULTILIB_USEDEP}] )
+		udev? ( !elibc_mingw? ( >=virtual/libudev-208:=[${MULTILIB_USEDEP}] ) )
 	wayland? (
 		>=dev-libs/wayland-1.20[${MULTILIB_USEDEP}]
 		gui-libs/libdecor[${MULTILIB_USEDEP}]
@@ -199,6 +199,10 @@ src_configure() {
 		-DSDL_VIDEO_RENDER_D3D=OFF
 		-DSDL_TESTS=$(usex test)
 	)
+
+	if [[ ${SDL2_IS_MINGW} -eq 1 ]]; then
+		mycmakeargs+=( -DSDL_LIBUDEV=OFF )
+	fi
 	cmake-multilib_src_configure
 }
 

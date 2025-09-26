@@ -1,0 +1,14 @@
+BDEPEND=>=app-portage/elt-patches-20250306
+DEFINED_PHASES=configure install prepare
+DESCRIPTION=Relatively thin, simple and robust network communication layer on top of UDP
+EAPI=8
+HOMEPAGE=http://enet.bespin.org/ https://github.com/lsalzman/enet/
+INHERIT=flag-o-matic libtool
+IUSE=static-libs
+KEYWORDS=amd64 ~arm64 ~loong ppc ppc64 ~riscv x86
+LICENSE=MIT
+RDEPEND=!net-libs/enet:0
+SLOT=1.3/8
+SRC_URI=http://enet.bespin.org/download/enet-1.3.18.tar.gz
+_eclasses_=toolchain-funcs	a0b29008c671a362b505f96fa80ce9c0	flag-o-matic	a7afe42e95fb46ce9691605acfb24672	libtool	c81bd096be5f4c82f4e8f156ef112402
+_md5_=0d43c3a4e70649ab58a1a25069296946

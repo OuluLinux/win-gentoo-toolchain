@@ -3,7 +3,7 @@
 
 EAPI=8
 
-inherit flag-o-matic libtool
+inherit flag-o-matic libtool toolchain-funcs
 
 DESCRIPTION="Relatively thin, simple and robust network communication layer on top of UDP"
 HOMEPAGE="http://enet.bespin.org/ https://github.com/lsalzman/enet/"

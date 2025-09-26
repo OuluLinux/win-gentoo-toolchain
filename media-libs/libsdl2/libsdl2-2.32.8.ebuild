@@ -40,7 +40,7 @@ REQUIRED_USE="
 	xscreensaver? ( X )
 "
 
-COMMON_DEPEND=$(cat <<-EOF
+COMMON_DEPEND="
 	virtual/libiconv[${MULTILIB_USEDEP}]
 	alsa? ( >=media-libs/alsa-lib-1.0.27.2[${MULTILIB_USEDEP}] )
 	dbus? ( >=sys-apps/dbus-1.6.18-r1[${MULTILIB_USEDEP}] )
@@ -55,20 +55,18 @@ COMMON_DEPEND=$(cat <<-EOF
 		>=media-libs/nas-1.9.4[${MULTILIB_USEDEP}]
 		>=x11-libs/libXt-1.1.4[${MULTILIB_USEDEP}]
 	)
-EOF
-)
+"
 
 if [[ ${SDL2_IS_MINGW} -eq 0 ]]; then
-	COMMON_DEPEND+=$(cat <<-EOF
+	COMMON_DEPEND+="
 	opengl? (
 		>=virtual/opengl-7.0-r1[${MULTILIB_USEDEP}]
 		>=virtual/glu-9.0-r1[${MULTILIB_USEDEP}]
 	)
-EOF
-	)
+"
 fi
 
-COMMON_DEPEND+=$(cat <<-EOF
+COMMON_DEPEND+="
 	pipewire? ( media-video/pipewire:=[${MULTILIB_USEDEP}] )
 	pulseaudio? ( media-libs/libpulse[${MULTILIB_USEDEP}] )
 	sndio? ( media-sound/sndio:=[${MULTILIB_USEDEP}] )
@@ -88,8 +86,7 @@ COMMON_DEPEND+=$(cat <<-EOF
 		>=x11-libs/libXrandr-1.4.2[${MULTILIB_USEDEP}]
 		xscreensaver? ( >=x11-libs/libXScrnSaver-1.2.2-r1[${MULTILIB_USEDEP}] )
 	)
-EOF
-)
+"
 RDEPEND="
 	${COMMON_DEPEND}
 	fcitx? ( app-i18n/fcitx:* )

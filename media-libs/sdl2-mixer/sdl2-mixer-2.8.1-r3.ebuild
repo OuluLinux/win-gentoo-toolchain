@@ -16,92 +16,92 @@ SLOT="0"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~ppc ppc64 ~riscv ~sparc x86"
 IUSE="flac fluidsynth gme midi mod modplug mp3 opus playtools stb timidity tremor vorbis +wav wavpack xmp"
 REQUIRED_USE="
-\tmidi? ( || ( timidity fluidsynth ) )
-\ttimidity? ( midi )
-\tfluidsynth? ( midi )
+    midi? ( || ( timidity fluidsynth ) )
+    timidity? ( midi )
+    fluidsynth? ( midi )
 
-\tvorbis? ( ?? ( stb tremor ) )
-\tstb? ( vorbis )
-\ttremor? ( vorbis )
+    vorbis? ( ?? ( stb tremor ) )
+    stb? ( vorbis )
+    tremor? ( vorbis )
 
-\tmod? ( || ( modplug xmp ) )
-\tmodplug? ( mod )
-\txmp? ( mod )
+    mod? ( || ( modplug xmp ) )
+    modplug? ( mod )
+    xmp? ( mod )
 "
 
 RDEPEND="
-\tmedia-libs/libsdl2[${MULTILIB_USEDEP}]
-\tflac? ( media-libs/flac:=[${MULTILIB_USEDEP}] )
-\tmidi? (
-\t\tfluidsynth? ( media-sound/fluidsynth:=[${MULTILIB_USEDEP}] )
-\t\ttimidity? ( media-sound/timidity++ )
-\t)
-\tmod? (
-\t\tmodplug? ( media-libs/libmodplug[${MULTILIB_USEDEP}] )
-\t\txmp? ( media-libs/libxmp[${MULTILIB_USEDEP}] )
-\t)
-\tmp3? ( media-sound/mpg123-base[${MULTILIB_USEDEP}] )
-\topus? ( media-libs/opusfile[${MULTILIB_USEDEP}] )
-\tplaytools? (
-\t\t!media-libs/sdl-mixer[playtools]
-\t\t!media-libs/sdl3-mixer[playtools]
-\t)
-\tvorbis? (
-\t\tstb? ( dev-libs/stb )
-\t\ttremor? ( media-libs/tremor[${MULTILIB_USEDEP}] )
-\t\t!stb? ( !tremor? ( media-libs/libvorbis[${MULTILIB_USEDEP}] ) )
-\t)
-\tgme? ( media-libs/game-music-emu[${MULTILIB_USEDEP}] )
-\twavpack? ( media-sound/wavpack[${MULTILIB_USEDEP}] )
+    media-libs/libsdl2[${MULTILIB_USEDEP}]
+    flac? ( media-libs/flac:=[${MULTILIB_USEDEP}] )
+    midi? (
+        fluidsynth? ( media-sound/fluidsynth:=[${MULTILIB_USEDEP}] )
+        timidity? ( media-sound/timidity++ )
+    )
+    mod? (
+        modplug? ( media-libs/libmodplug[${MULTILIB_USEDEP}] )
+        xmp? ( media-libs/libxmp[${MULTILIB_USEDEP}] )
+    )
+    mp3? ( media-sound/mpg123-base[${MULTILIB_USEDEP}] )
+    opus? ( media-libs/opusfile[${MULTILIB_USEDEP}] )
+    playtools? (
+        !media-libs/sdl-mixer[playtools]
+        !media-libs/sdl3-mixer[playtools]
+    )
+    vorbis? (
+        stb? ( dev-libs/stb )
+        tremor? ( media-libs/tremor[${MULTILIB_USEDEP}] )
+        !stb? ( !tremor? ( media-libs/libvorbis[${MULTILIB_USEDEP}] ) )
+    )
+    gme? ( media-libs/game-music-emu[${MULTILIB_USEDEP}] )
+    wavpack? ( media-sound/wavpack[${MULTILIB_USEDEP}] )
 "
 DEPEND="${RDEPEND}"
 
 multilib_src_configure() {
-\tlocal enable_cmd=yes
-\tif [[ ${CHOST} == *-mingw32 ]]; then
-\t\t# SDL2's play commands rely on fork(), which mingw targets lack.
-\t\tenable_cmd=no
-\tfi
+    local enable_cmd=yes
+    if [[ ${CHOST} == *-mingw32 ]]; then
+        # SDL2's command utilities rely on fork(), which mingw targets lack.
+        enable_cmd=no
+    fi
 
-\tlocal mycmakeargs=(
-\t\t-DSDL2MIXER_DEPS_SHARED=no # aka, no dlopen() (bug #950965)
-\t\t-DSDL2MIXER_CMD=${enable_cmd}
-\t\t-DSDL2MIXER_WAVE=$(usex wav)
-\t\t-DSDL2MIXER_MOD=$(usex mod)
-\t\t-DSDL2MIXER_MOD_MODPLUG=$(usex modplug)
-\t\t-DSDL2MIXER_MOD_XMP=$(usex xmp)
-\t\t-DSDL2MIXER_MIDI=$(usex midi)
-\t\t-DSDL2MIXER_MIDI_TIMIDITY=$(usex timidity)
-\t\t-DSDL2MIXER_MIDI_FLUIDSYNTH=$(usex fluidsynth)
-\t\t-DSDL2MIXER_VORBIS=$(usex vorbis $(usex stb STB $(usex tremor TREMOR VORBISFILE) ) no )
-\t\t-DSDL2MIXER_FLAC=$(usex flac)
-\t\t-DSDL2MIXER_FLAC_LIBFLAC=$(usex flac)
-\t\t-DSDL2MIXER_MP3=$(usex mp3)
-\t\t-DSDL2MIXER_MP3_MPG123=$(usex mp3)
-\t\t-DSDL2MIXER_OPUS=$(usex opus)
-\t\t-DSDL2MIXER_GME=$(usex gme)
-\t\t-DSDL2MIXER_WAVPACK=$(usex wavpack)
-\t\t-DSDL2MIXER_SAMPLES=$(usex playtools)
-\t\t-DSDL2MIXER_SAMPLES_INSTALL=$(usex playtools)
-\t)
-\tcmake_src_configure
+    local mycmakeargs=(
+        -DSDL2MIXER_DEPS_SHARED=no # aka, no dlopen() (bug #950965)
+        -DSDL2MIXER_CMD=${enable_cmd}
+        -DSDL2MIXER_WAVE=$(usex wav)
+        -DSDL2MIXER_MOD=$(usex mod)
+        -DSDL2MIXER_MOD_MODPLUG=$(usex modplug)
+        -DSDL2MIXER_MOD_XMP=$(usex xmp)
+        -DSDL2MIXER_MIDI=$(usex midi)
+        -DSDL2MIXER_MIDI_TIMIDITY=$(usex timidity)
+        -DSDL2MIXER_MIDI_FLUIDSYNTH=$(usex fluidsynth)
+        -DSDL2MIXER_VORBIS=$(usex vorbis $(usex stb STB $(usex tremor TREMOR VORBISFILE) ) no )
+        -DSDL2MIXER_FLAC=$(usex flac)
+        -DSDL2MIXER_FLAC_LIBFLAC=$(usex flac)
+        -DSDL2MIXER_MP3=$(usex mp3)
+        -DSDL2MIXER_MP3_MPG123=$(usex mp3)
+        -DSDL2MIXER_OPUS=$(usex opus)
+        -DSDL2MIXER_GME=$(usex gme)
+        -DSDL2MIXER_WAVPACK=$(usex wavpack)
+        -DSDL2MIXER_SAMPLES=$(usex playtools)
+        -DSDL2MIXER_SAMPLES_INSTALL=$(usex playtools)
+    )
+    cmake_src_configure
 }
 
 multilib_src_install_all() {
-\tdodoc {CHANGES,README}.txt
-\trm -r "${ED}"/usr/share/licenses || die
+    dodoc {CHANGES,README}.txt
+    rm -r "${ED}"/usr/share/licenses || die
 }
 
 pkg_postinst() {
-\t# bug #412035
-\tif use midi && use fluidsynth; then
-\t\tewarn "FluidSynth support requires you to set the SDL_SOUNDFONTS"
-\t\tewarn "environment variable to the location of a SoundFont file"
-\t\tewarn "unless the game or application happens to do this for you."
-\t\tif use timidity; then
-\t\t\tewarn "Failing to do so will result in Timidity being used instead."
-\t\telse
-\t\t\tewarn "Failing to do so will result in silence."
-\t\tfi
-\tfi
+    # bug #412035
+    if use midi && use fluidsynth; then
+        ewarn "FluidSynth support requires you to set the SDL_SOUNDFONTS"
+        ewarn "environment variable to the location of a SoundFont file"
+        ewarn "unless the game or application happens to do this for you."
+        if use timidity; then
+            ewarn "Failing to do so will result in Timidity being used instead."
+        else
+            ewarn "Failing to do so will result in silence."
+        fi
+    fi
 }

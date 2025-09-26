@@ -27,7 +27,7 @@
  MV=mv
  
 @@ -59,10 +56,10 @@
- CLIENT_INCLUDES= $(INCLUDES) -Iinclude
+ CLIENT_INCLUDES= $(INCLUDES) $(SDL2_CFLAGS) -Iinclude
  CLIENT_LIBS= -F../sauerbraten.app/Contents/Frameworks/ -framework SDL2 -framework SDL2_image
  CLIENT_LIBS+= -framework SDL2_mixer -framework CoreAudio -framework AudioToolbox
 -CLIENT_LIBS+= -framework AudioUnit -framework OpenGL -framework Cocoa -lz -Lenet -lenet

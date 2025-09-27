@@ -1,9 +1,10 @@
 --- a/src/Makefile
 +++ b/src/Makefile
-@@ -7,6 +7,12 @@
+@@ -7,6 +7,13 @@
  PLATFORM= $(shell uname -s | tr '[:lower:]' '[:upper:]')
  PLATFORM_ARCH= $(shell uname -m)
  PLATFORM_PREFIX= native
++MINGW_RES=
 +ifneq (,$(findstring w64-mingw32,$(CXX)))
 +PLATFORM = MINGW CROSS
 +ifneq (,$(findstring x86_64,$(CXX)))
@@ -13,7 +14,17 @@
  ifdef OS
      ifeq ($(OS),Windows_NT)
          PLATFORM = MINGW
-@@ -47,7 +53,7 @@
+@@ -20,6 +27,9 @@
+ 
+ ifneq (,$(findstring MINGW,$(PLATFORM)))
+ WINDRES= windres
++ifneq ($(wildcard vcpp/mingw.rc),)
++MINGW_RES= vcpp/mingw.res
++endif
+ ifneq (,$(findstring 64,$(PLATFORM)))
+ ifneq (,$(findstring CROSS,$(PLATFORM)))
+   CXX=x86_64-w64-mingw32-g++
+@@ -47,7 +57,7 @@
  endif
  CLIENT_INCLUDES= $(INCLUDES) $(SDL2_CFLAGS) -Iinclude
  STD_LIBS= -static-libgcc -static-libstdc++
@@ -22,7 +33,7 @@
  else	
  ifneq (,$(findstring DARWIN,$(PLATFORM)))
  OSXMIN= 10.9
-@@ -130,8 +136,8 @@
+@@ -130,8 +140,8 @@
  SERVER_INCLUDES= -DSTANDALONE -Istandalone/shared -Istandalone/engine -Istandalone/game $(INCLUDES)
  ifneq (,$(findstring MINGW,$(PLATFORM)))
  SERVER_INCLUDES+= -Iinclude
@@ -33,3 +44,24 @@
  else
  SERVER_LIBS= -lenet -lz
  MASTER_LIBS= $(SERVER_LIBS)
+@@ -193,12 +203,16 @@
+ 
+ ifneq (,$(findstring MINGW,$(PLATFORM)))
+ client: $(CLIENT_OBJS)
+-	$(WINDRES) -I vcpp -i vcpp/mingw.rc -J rc -o vcpp/mingw.res -O coff 
+-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $(WINBIN)/tesseract.exe vcpp/mingw.res $(CLIENT_OBJS) $(CLIENT_LIBS)
++ifneq ($(MINGW_RES),)
++	$(WINDRES) -I vcpp -i vcpp/mingw.rc -J rc -o $(MINGW_RES) -O coff 
++endif
++	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $(WINBIN)/tesseract.exe $(MINGW_RES) $(CLIENT_OBJS) $(CLIENT_LIBS)
+ 
+ server: $(SERVER_OBJS)
+-	$(WINDRES) -I vcpp -i vcpp/mingw.rc -J rc -o vcpp/mingw.res -O coff
+-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $(WINBIN)/tess_server.exe vcpp/mingw.res $(SERVER_OBJS) $(SERVER_LIBS)
++ifneq ($(MINGW_RES),)
++	$(WINDRES) -I vcpp -i vcpp/mingw.rc -J rc -o $(MINGW_RES) -O coff
++endif
++	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $(WINBIN)/tess_server.exe $(MINGW_RES) $(SERVER_OBJS) $(SERVER_LIBS)
+ 
+ master: $(MASTER_OBJS)
+ 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $(WINBIN)/tess_master.exe $(MASTER_OBJS) $(MASTER_LIBS)

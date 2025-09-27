@@ -43,6 +43,7 @@ PATCHES=(
 	# Respect user toolchain flags, use system enet, modern freetype detection
 	"${FILESDIR}"/tesseract-sauerbraten-2025.9-build.patch
 	"${FILESDIR}"/tesseract-sauerbraten-2025.9-mingw-cross.patch
+	"${FILESDIR}"/tesseract-sauerbraten-2025.9-mingw-link.patch
 
 	# More sensible SDL include handling
 	"${FILESDIR}"/tesseract-sauerbraten-2020.12.29-includefix.patch

@@ -1,20 +1,19 @@
 --- a/src/Makefile
 +++ b/src/Makefile
-@@ -3,6 +3,13 @@
- PKG_CONFIG ?= pkg-config
- SDL2_CFLAGS := $(shell $(PKG_CONFIG) --cflags sdl2)
- SDL2_LIBS := $(shell $(PKG_CONFIG) --libs sdl2)
-+
+@@ -7,6 +7,12 @@
+ PLATFORM= $(shell uname -s | tr '[:lower:]' '[:upper:]')
+ PLATFORM_ARCH= $(shell uname -m)
+ PLATFORM_PREFIX= native
 +ifneq (,$(findstring w64-mingw32,$(CXX)))
-+PLATFORM := MINGW CROSS
++PLATFORM = MINGW CROSS
 +ifneq (,$(findstring x86_64,$(CXX)))
 +PLATFORM += 64
 +endif
 +endif
- 
- PLATFORM= $(shell uname -s | tr '[:lower:]' '[:upper:]')
- PLATFORM_ARCH= $(shell uname -m)
-@@ -47,7 +54,7 @@
+ ifdef OS
+     ifeq ($(OS),Windows_NT)
+         PLATFORM = MINGW
+@@ -47,7 +53,7 @@
  endif
  CLIENT_INCLUDES= $(INCLUDES) $(SDL2_CFLAGS) -Iinclude
  STD_LIBS= -static-libgcc -static-libstdc++
@@ -23,7 +22,7 @@
  else	
  ifneq (,$(findstring DARWIN,$(PLATFORM)))
  OSXMIN= 10.9
-@@ -130,8 +137,8 @@
+@@ -130,8 +136,8 @@
  SERVER_INCLUDES= -DSTANDALONE -Istandalone/shared -Istandalone/engine -Istandalone/game $(INCLUDES)
  ifneq (,$(findstring MINGW,$(PLATFORM)))
  SERVER_INCLUDES+= -Iinclude

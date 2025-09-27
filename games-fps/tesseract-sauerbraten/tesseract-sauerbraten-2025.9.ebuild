@@ -73,18 +73,50 @@ src_install() {
 	local libexecdir="/usr/lib"
 	local datadir="/usr/share/${PN}"
 	local statedir="/var/lib/${PN}"
+	local exeinto_dir="${libexecdir}"
+	local client_src="src/tess_client"
+	local server_src="src/tess_server"
+	local master_src="src/tess_master"
+	local client_dest="tess_client"
+	local server_dest="tess_server"
+	local master_dest="tess_master"
+
+	if use elibc_mingw ; then
+		exeinto_dir="/usr/bin"
+		local win_subdir="bin"
+		case "$(tc-arch)" in
+			amd64)
+				win_subdir="bin64"
+				;;
+			x86)
+				win_subdir="bin"
+				;;
+			*)
+				die "Unsupported MinGW architecture: $(tc-arch)"
+				;;
+		esac
+
+		client_src="${win_subdir}/tesseract.exe"
+		server_src="${win_subdir}/tess_server.exe"
+		master_src="${win_subdir}/tess_master.exe"
+		client_dest+=".exe"
+		server_dest+=".exe"
+		master_dest+=".exe"
+	fi
 
 	if ! use dedicated ; then
 		insinto "${datadir}"
 		doins -r config packages
 
-		exeinto "${libexecdir}"
-		doexe src/tess_client
-
-		make_wrapper "${PN}-client" "${libexecdir}/tess_client -q\$HOME/.${PN} -r" "${datadir}"
-
-		newicon -s 256 packages/interface/cube.png ${PN}.png
-		make_desktop_entry "${PN}-client" "Cube 2: Tesseract-Sauerbraten"
+		exeinto "${exeinto_dir}"
+		if use elibc_mingw ; then
+			newexe "${client_src}" "${client_dest}" || die
+		else
+			doexe "${client_src}" || die
+			make_wrapper "${PN}-client" "${libexecdir}/tess_client -q\$HOME/.${PN} -r" "${datadir}"
+			newicon -s 256 packages/interface/cube.png ${PN}.png
+			make_desktop_entry "${PN}-client" "Cube 2: Tesseract-Sauerbraten"
+		fi
 	fi
 
 	insinto "${statedir}"
@@ -92,15 +124,25 @@ src_install() {
 		doins config/server-init.cfg
 	fi
 
-	exeinto "${libexecdir}"
-	doexe src/tess_master
-
-	if use dedicated || use server ; then
-		doexe src/tess_server
+	exeinto "${exeinto_dir}"
+	if use elibc_mingw ; then
+		newexe "${master_src}" "${master_dest}" || die
+	else
+		doexe "${master_src}" || die
 	fi
 
-	make_wrapper "${PN}-server" "${libexecdir}/tess_server -k${datadir} -q${statedir}"
-	make_wrapper "${PN}-master" "${libexecdir}/tess_master ${statedir}"
+	if use dedicated || use server ; then
+		if use elibc_mingw ; then
+			newexe "${server_src}" "${server_dest}" || die
+		else
+			doexe "${server_src}" || die
+		fi
+	fi
+
+	if ! use elibc_mingw ; then
+		make_wrapper "${PN}-server" "${libexecdir}/tess_server -k${datadir} -q${statedir}"
+		make_wrapper "${PN}-master" "${libexecdir}/tess_master ${statedir}"
+	fi
 
 	cp "${FILESDIR}"/tesseract-sauerbraten.init "${T}/${PN}.init" || die
 	sed -i \

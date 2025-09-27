@@ -7,6 +7,8 @@
 +PKG_CONFIG ?= pkg-config
 +SDL2_CFLAGS := $(shell $(PKG_CONFIG) --cflags sdl2)
 +SDL2_LIBS := $(shell $(PKG_CONFIG) --libs sdl2)
++SDL2_IMAGE_LIBS := $(shell $(PKG_CONFIG) --libs SDL2_image)
++SDL2_MIXER_LIBS := $(shell $(PKG_CONFIG) --libs SDL2_mixer)
  
  PLATFORM= $(shell uname -s | tr '[:lower:]' '[:upper:]')
  PLATFORM_ARCH= $(shell uname -m)
@@ -37,7 +39,7 @@
 -CLIENT_INCLUDES= $(INCLUDES) -I/usr/X11R6/include `sdl2-config --cflags`
 -CLIENT_LIBS= -Lenet -lenet -L/usr/X11R6/lib -lX11 `sdl2-config --libs` -lSDL2_image -lSDL2_mixer -lz -lGL
 +CLIENT_INCLUDES= $(INCLUDES) $(SDL2_CFLAGS)
-+CLIENT_LIBS= -lenet -L/usr/X11R6/lib -lX11 $(SDL2_LIBS) -lSDL2_image -lSDL2_mixer -lz -lGL
++CLIENT_LIBS= -lenet -L/usr/X11R6/lib -lX11 $(SDL2_LIBS) $(SDL2_IMAGE_LIBS) $(SDL2_MIXER_LIBS) -lz -lGL
  endif
  endif
  ifeq ($(PLATFORM),LINUX)

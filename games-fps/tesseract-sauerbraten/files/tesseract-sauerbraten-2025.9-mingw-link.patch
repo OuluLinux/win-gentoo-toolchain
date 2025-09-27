@@ -29,7 +29,7 @@
  CLIENT_INCLUDES= $(INCLUDES) $(SDL2_CFLAGS) -Iinclude
  STD_LIBS= -static-libgcc -static-libstdc++
 -CLIENT_LIBS= -mwindows $(STD_LIBS) -L$(WINBIN) -L$(WINLIB) -lSDL2 -lSDL2_image -lSDL2_mixer -lzlib1 -lopengl32 -lenet -lws2_32 -lwinmm
-+CLIENT_LIBS= $(STD_LIBS) -L$(WINBIN) -L$(WINLIB) $(SDL2_LIBS) -lSDL2_image -lSDL2_mixer -lz -lopengl32 -lenet -lws2_32 -lwinmm
++CLIENT_LIBS= $(STD_LIBS) -L$(WINBIN) -L$(WINLIB) $(SDL2_LIBS) $(SDL2_IMAGE_LIBS) $(SDL2_MIXER_LIBS) -lz -lopengl32 -lenet -lws2_32 -lwinmm
  else	
  ifneq (,$(findstring DARWIN,$(PLATFORM)))
  OSXMIN= 10.9

@@ -1,23 +1,19 @@
 --- a/src/Makefile
 +++ b/src/Makefile
-@@ -4,11 +4,18 @@
+@@ -3,6 +3,13 @@
+ PKG_CONFIG ?= pkg-config
  SDL2_CFLAGS := $(shell $(PKG_CONFIG) --cflags sdl2)
  SDL2_LIBS := $(shell $(PKG_CONFIG) --libs sdl2)
- 
- PLATFORM= $(shell uname -s | tr '[:lower:]' '[:upper:]')
- PLATFORM_ARCH= $(shell uname -m)
- PLATFORM_PREFIX= native
++
 +ifneq (,$(findstring w64-mingw32,$(CXX)))
-+PLATFORM = MINGW CROSS
++PLATFORM := MINGW CROSS
 +ifneq (,$(findstring x86_64,$(CXX)))
 +PLATFORM += 64
 +endif
 +endif
- ifdef OS
-     ifeq ($(OS),Windows_NT)
-         PLATFORM = MINGW
-     endif
- endif
+ 
+ PLATFORM= $(shell uname -s | tr '[:lower:]' '[:upper:]')
+ PLATFORM_ARCH= $(shell uname -m)
 @@ -47,7 +54,7 @@
  endif
  CLIENT_INCLUDES= $(INCLUDES) $(SDL2_CFLAGS) -Iinclude
